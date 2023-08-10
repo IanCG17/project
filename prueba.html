@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QR Scanner</title>
+</head>
+<body>
+  <video id="camera" autoplay></video>
+  <script>
+    const videoElement = document.getElementById('camera');
+
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        videoElement.srcObject = stream;
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+      }
+    }
+
+    startCamera();
+
+    const scanner = new Instascan.Scanner({ video: videoElement });
+
+    scanner.addListener('scan', function(content) {
+      alert('QR code content: ' + content);
+    });
+
+    Instascan.Camera.getCameras().then(function(cameras) {
+      if (cameras.length > 0) {
+        scanner.start(cameras[0]);
+      } else {
+        console.error('No cameras found.');
+      }
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/instascan/1.0.1/instascan.min.js"></script>
+</body>
+</html>
